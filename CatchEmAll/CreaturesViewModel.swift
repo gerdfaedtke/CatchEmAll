@@ -12,14 +12,14 @@ class CreaturesViewModel: ObservableObject {
     
     private struct Returned: Codable {
         var count: Int
-        var next: String? 
+        var next: String?
         var results: [Creature]
     }
     
     
     
     @Published var urlString = "https://pokeapi.co/api/v2/pokemon/"
-    @Published var count = 0 
+    @Published var count = 0
     @Published var creaturesArray: [Creature] = []
     @Published var isLoading = false
     
@@ -46,18 +46,29 @@ class CreaturesViewModel: ObservableObject {
             self.urlString = returned.next ?? ""
             self.creaturesArray = self.creaturesArray + returned.results
             isLoading = false
-                    
+            
         } catch {
             isLoading = false
             print("😡 ERROR, Could not use URL at \(urlString) to get data and response")
         }
     }
+    func loadNextIfNeeded(creature: Creature) async {
+        guard let lastCreature = creaturesArray.last else {
+            return
+        }
+        if creature.id == lastCreature.id && urlString.hasPrefix("http") {
+            Task {
+                await getData()
+            }
+        }
+    }
+    
     
     func loadAll() async {
         guard urlString.hasPrefix("http") else {return}
         
         await getData() // get next page of data
-        await loadAll() // call loadAll again - will stop when all pages are retrieved 
+        await loadAll() // call loadAll again - will stop when all pages are retrieved
     }
     
 }
