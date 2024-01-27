@@ -31,7 +31,7 @@ struct DetailView: View {
                         .resizable()
                         .scaledToFit()
                         .background(.white)
-                        .frame(height: 96)
+                        .frame(width: 96, height: 96)
                         .cornerRadius(16)
                         .shadow(radius: 8, x: 5, y: 5)
                         .overlay {
